@@ -246,14 +246,6 @@ It also specifies parameters of heap and stack sections.</p>
     ICCM0    : ORIGIN = 0x00000000, LENGTH = 0x00004000
     DCCM     : ORIGIN = 0x80000000, LENGTH = 0x00004000
 }
-
-REGION_ALIAS(&quot;startup&quot;, ICCM0)
-REGION_ALIAS(&quot;text&quot;, ICCM0)
-REGION_ALIAS(&quot;data&quot;, DCCM)
-REGION_ALIAS(&quot;sdata&quot;, DCCM)
-
-PROVIDE (__stack_top = (0x80003fff &amp; -4 ));
-PROVIDE (__end_heap =  (0x80003fff ));
 </pre></div>
 </div>
 <p>This <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> consists of three logical sections. First sections <code class="docutils literal notranslate"><span class="pre">MEMORY</span></code>
@@ -281,6 +273,55 @@ following end of data sections (<code class="docutils literal notranslate"><span
 to <code class="docutils literal notranslate"><span class="pre">__end_heap</span></code>. Therefore heap and stack grow towards each other and eventually
 may collide and overwrite each over. This linker emulation doesn’t provide any
 protection against this scenario.</p>
+<div class="section" id="linker-file-for-hsdk-and-hsdk-4xd">
+<h4>Linker file for HSDK and HSDK-4xD<a class="headerlink" href="#linker-file-for-hsdk-and-hsdk-4xd" title="Permalink to this headline">¶</a></h4>
+<p>Linker files for HSDK and HSDK-4xD are differs depending on amout of cores.
+Due to limited space on a cristal ICCM and DCCM are present only for odd numbered
+cores.</p>
+<p>HSDK <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> map for an even number of cores:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x100000000
+}
+</pre></div>
+</div>
+<p>HSDK <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> map for an odd number of cores:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x70000000
+    ICCM0    : ORIGIN = 0x70000000, LENGTH = 0x00040000
+    CCMWRAP0 : ORIGIN = 0x70040000, LENGTH = 0x0ffc0000
+    DCCM     : ORIGIN = 0x80000000, LENGTH = 0x00040000
+    CCMWRAP1 : ORIGIN = 0x80040000, LENGTH = 0x0ffc0000
+    SYSTEM1  : ORIGIN = 0x90000000, LENGTH = 0x70000000
+}
+</pre></div>
+</div>
+<p>HSDK-4xD <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> map for an even number of cores:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0xb0000000
+    CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
+    CCMWRAP0 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
+    SYSTEM1  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
+}
+</pre></div>
+</div>
+<p>HSDK-4xD <code class="docutils literal notranslate"><span class="pre">memory.x</span></code> map for an odd number of cores:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    SYSTEM0  : ORIGIN = 0x00000000, LENGTH = 0x60000000
+    DCCM     : ORIGIN = 0x60000000, LENGTH = 0x00010000
+    ICCM0    : ORIGIN = 0x60000000, LENGTH = 0x00040000
+    CCMWRAP0 : ORIGIN = 0x60010000, LENGTH = 0x0fff0000
+    SYSTEM1  : ORIGIN = 0x60010000, LENGTH = 0xffff0000
+    CCMWRAP1 : ORIGIN = 0x60040000, LENGTH = 0x0ffc0000
+    SYSTEM2  : ORIGIN = 0x60040000, LENGTH = 0xfffd0000
+    SYSTEM3  : ORIGIN = 0x70000000, LENGTH = 0xf0040000
+    SYSTEM4  : ORIGIN = 0x70000000, LENGTH = 0x40000000
+    CSM      : ORIGIN = 0xb0000000, LENGTH = 0x00040000
+    CCMWRAP2 : ORIGIN = 0xb0040000, LENGTH = 0x0ffc0000
+    SYSTEM5  : ORIGIN = 0xc0000000, LENGTH = 0x40000000
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="custom-linker-scripts">
 <h3>Custom linker scripts<a class="headerlink" href="#custom-linker-scripts" title="Permalink to this headline">¶</a></h3>
